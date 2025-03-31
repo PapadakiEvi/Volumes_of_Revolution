@@ -1,0 +1,225 @@
+---
+title: "Volumes of Revolution"
+subtitle: "A-level Further Maths - Revision"
+author: "Evi Papadaki"
+transition: fade
+project:
+  output-dir: docs
+format: 
+  revealjs:
+    center: false
+    width: 1500
+    margin: 0.1
+    reference-location: document
+    slide-number: true
+    incremental: false
+    smaller: True
+    auto-stretch: false
+    title-slide-attributes: 
+      data-background-size: cover
+      data-background-opacity: "0.2"
+---
+
+## Background: Area under the curve
+
+::: {.columns}
+:::{.column width="40%"}
+![](approximate_area_under_curve.jpeg){.lightbox}
+:::
+:::{.column width="60%"}
+A key idea behind integration is "splitting" the area under the curve into strips of width $\Delta x$ and hight $y=f(x)$. The area of **each strip** is 
+$$\Delta A = y \ \Delta x $$
+Then the **area under the curve** is approximated:
+$$\sum \Delta A = \sum y \ \Delta x $$
+In reality, this is an approximation of the area. 
+:::
+:::
+For an exact calculation, we want to make the width of the strips infinitesimally small:
+$$ \require{color} \textcolor{blue}{\lim_{\Delta x \to 0} \sum} \, \textcolor{green}{y} \, \textcolor{red}{\Delta x}
+= 
+\textcolor{blue}{\int_{a}^{b}} \textcolor{green}{y} \, \textcolor{red}{dx} \overset{ \, y = f(x)}{=} 
+\textcolor{blue}{\int_{a}^{b}} \textcolor{green}{f(x)} \, \textcolor{red}{dx}$$
+
+## Revolution around the x-axis
+:::{.columns}
+:::{.column width="40%"}
+![](Revolution-around-x.png)
+:::
+:::{.column width="60%"}
+If we rotate each strip $2 \pi$ around the $x$-axis, each strip forms a cylinder of radius $y=f(x)$ and hight $\Delta x$. The volume of **each cylinder** is: 
+$$ \Delta V= \pi \ y^2 \ \Delta x$$
+Summing the volumes of each cylinder we get an approximation of the **volume of revolution**:
+$$\sum \Delta V= \sum \pi \ y^2 \ \Delta x = \pi \ \sum  \ y^2 \ \Delta x $$
+:::
+:::
+We now can make $\Delta x$ infinitesimally small to get the exact volume:
+$$\boxed{ V = \pi \ \int _{a}^{b} y^2 \ dx = \pi \ \int _{a}^{b} (f(x))^2 \ dx }$$
+
+## Revolution around the y-axis
+:::{.columns}
+:::{.column width="40%"}
+![](Revolution-around-y.png)
+:::
+:::{.column width="60%"}
+If we rotate each strip $2 \pi$ around the $y$-axis, each strip forms a cylinder of radius $x=f^{-1}(y)$ and hight $\Delta y$. The volume of **each cylinder** is: 
+$$ \Delta V= \pi \ x^2 \ \Delta y$$
+Summing the volumes of each cylinder we get an approximation of the **volume of revolution**:
+$$\sum \Delta V= \sum \pi \ x^2 \ \Delta y = \pi \ \sum  \ x^2 \ \Delta y $$
+:::
+:::
+We now can make $\Delta x$ infinitesimally small to get the exact volume:
+$$ \boxed{V = \pi \ \int _{f(a)}^{f(b)} x^2 \ dy = \pi \ \int _{f(a)}^{f(b)} (f^{-1}(y))^2 \ dy}$$
+
+## <span style="font-size: 0.5em;">Example 1</span>
+::: {.callout-note icon=false appearance="simple"}
+The curves $f(x)=x^2+16$ and $g(x)=36-x$ for $x>0$ intersect at the point P with coordinates (4, 32). A solid is created by rotating the region between $f$, $g$, and the line $x=0$, around the $y$-axis. Find the volume of the solid.
+:::
+:::{.columns}
+:::{.column width="40%"}
+
+```{r, echo=FALSE, message=FALSE}
+library(ggplot2)
+
+# Functions
+f <- function(x) x^2 + 16
+g <- function(x) 36 - x
+
+# x values
+x_full <- seq(0, 40, length.out = 400)
+x_shade <- seq(0, 4, length.out = 200)
+
+# Data for full curves
+curve_df <- data.frame(
+  x = x_full,
+  f_x = f(x_full),
+  g_x = g(x_full)
+)
+
+# Data for shaded region
+shade_df <- data.frame(
+  x = c(x_shade, rev(x_shade)),
+  y = c(f(x_shade), rev(g(x_shade)))
+)
+
+# Point of intersection
+intersect_point <- data.frame(x = 4, y = 32)
+
+# Create the plot
+p <- ggplot() +
+  geom_polygon(data = shade_df, aes(x = x, y = y), fill = "lightblue", alpha = 0.5) +
+  geom_line(data = curve_df, aes(x = x, y = f_x), color = "red", size = 1) +
+  geom_line(data = curve_df, aes(x = x, y = g_x), color = "darkgreen", size = 1) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.5) +
+  annotate("text", x = 1, y = f(1), label = "f(x) == x^2 + 16", color = "red", parse = TRUE, hjust = 0, vjust = 1.5) +
+  annotate("text", x = 8, y = g(8), label = "g(x) == 36 - x", color = "darkgreen", parse = TRUE, hjust = 0, vjust = -0.5) +
+  geom_point(data = intersect_point, aes(x = x, y = y), size = 3, shape = 21, fill = "black") +
+  geom_text(data = intersect_point, aes(x = x, y = y, label = "P (4, 32)"), hjust = -0.2, vjust = -0.5) +
+  geom_segment(aes(x = 0, xend = 4, y = 32, yend = 32), linetype = "dashed", color = "black") +
+  coord_fixed(xlim = c(0, 40), ylim = c(0, 40))
+
+# Save the plot
+ggsave("volume-region.png", plot = p, width = 8, height = 8, dpi = 300)
+```
+![](volume-region.png){.lightbox}
+
+
+:::
+:::{.column width="60%"}
+
+<div style="font-size: 65%;">
+
+We calculate the volume created by each curve separately. 
+
+For $y \in [16,32]$ the area we are interested in bounded by $f$ (i.e., under $f^{-1}$). 
+
+We calculate $f^{-1}(y)$:
+$$ y= f(x) \iff y=x^2+16 \iff x= \sqrt{y-16}$$
+
+So the volume:
+
+$$ V_1 = \pi \ \int _{16}^{32} x^2 \ dy = \pi \ \int _{16}^{32} (\sqrt{y-16})^2 \ dy = \pi \ \int _{16}^{32} (y-16) \ dy = \left[ \frac{y^2}{2}-16y \right]_{16}^{32}=128 \ \pi$$
+
+
+For $y \in [32,36]$ the area we are interested is bounded by $g$ (so under $g^{-1}$).
+Because $g$ is a straight line we can use the formula for the volume of a cone and save time:
+$$V_2=\frac{\pi \ r^2 \ h}{3}= \frac{\pi \times 4^2 \times (36-32)}{3}= \frac{64}{3}\pi$$
+Therefore, the volume of the solid is:
+$$V=V_1+V_2=128\pi + \frac{64}{3}{\pi}$$
+</div>
+
+:::
+:::
+
+
+## Curves in Parametric Form
+In the exam, you might be given the curves in parametric form: 
+$$ x= f(t) \\y = g(t)$$
+The formula in such cases is an adjustment of the previous formulas using the chain rule/implicit differentiation: 
+
+**Revolution around the $x$-axis**
+$$V = \pi \ \int _{a}^{b} y^2 \ \textcolor{red}{dx} = \pi \ \int _{a}^{b} y^2 \ \textcolor{red}{\frac{dx}{dt}dt} $$
+
+**Revolution around the $y$-axis**
+$$V = \pi \ \int _{g(a)}^{g(b)} x^2 \ \textcolor{red}{dy} = \pi \ \int _{g(a)}^{g(b)} x^2 \  \textcolor{red}{\frac{dy}{dt}dt}$$
+
+## <span style="font-size: 0.5em;">Example 2</span>
+::: {.callout-note icon=false appearance="simple"}
+The curve $C$ has parametric equations $x=\sin ^4 \theta \sqrt{\cos \theta}$, $y=\cos \theta$, $0 \leq \theta \leq \frac{\pi}{2}$. The finite region $R$ bounded by the curve and the y-axis is rotated through $2 \pi$ about the $y$-axis. Find the volume of the solid of revolution formed.
+:::
+:::{.columns}
+:::{.column width="30%"}
+
+```{r, echo=FALSE, message=FALSE}
+library(ggplot2)
+
+# Generate theta values
+theta <- seq(0, pi/2, length.out = 200)
+
+# Compute cos(theta), making sure we clamp it to avoid small negatives
+cos_theta <- cos(theta)
+cos_theta_safe <- ifelse(cos_theta < 0, 0, cos_theta)
+
+# Parametric equations
+x_vals <- sin(theta)^4 * sqrt(cos_theta_safe)
+y_vals <- cos_theta
+
+# Create data for the curve
+df <- data.frame(x = x_vals, y = y_vals)
+
+# Create region data: add (0,0) to close shape with y-axis
+region_df <- rbind(df, data.frame(x = 0, y = 0))
+
+# Build the plot with x- and y-axis lines
+p <- ggplot() +
+  geom_polygon(data = region_df, aes(x = x, y = y), fill = "lightblue", alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.5) +  # x-axis
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.5) +  # y-axis
+  coord_equal()
+
+# Save the image
+ggsave("region-curve-C.png", plot = p, width = 6, height = 6, dpi = 300)
+```
+
+![](region-curve-C.png){.lightbox}
+
+:::
+:::{.column width="70%"}
+<div style="font-size: 75%;">
+$$V= \pi \int _{0}^{\frac{\pi}{2}}x^2 \frac{dy}{d \theta}d \theta$$
+Substituting $x=\sin^4 \theta \sqrt{\cos \theta}$ and $\frac{dy}{d \theta}=-\sin \theta$ into the formula we have:
+
+\begin{equation}
+\begin{split}
+V &= \pi \ \int_{0}^{\frac{\pi}{2}} \left( \sin^4 \theta \sqrt{\cos \theta} \right)^2 \cdot \left( -\sin \theta \right) \ d\theta \\
+&= - \pi \ \int_{0}^{\frac{\pi}{2}} \sin^9 \theta \cos \theta \ d\theta \\
+&= - \pi \ \int_{0}^{\frac{\pi}{2}} \sin^9 \theta (\sin \theta)' \ d\theta
+
+\end{split}
+\end{equation}
+Using reverse chain rule: 
+$$V= - \pi \ \left[ \frac{\sin ^{10} x}{10} \right]_{0}^{\frac{\pi}{2}}= - \frac{\pi}{10}$$
+Therefore the volume is $V= \frac{\pi}{10}$.
+</div>
+:::
+:::
